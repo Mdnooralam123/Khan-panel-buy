@@ -9,14 +9,19 @@ import random
 from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = 'aimbotfx_reseller_secret_2026'
+app.secret_key = os.environ.get('SECRET_KEY', 'aimbotfx_reseller_secret_2026')
 
 def init_db():
-    db_exists = os.path.exists('reseller.db')
+    # Use a file-based database with proper path
+    db_path = '/tmp/reseller.db'
     
-    conn = sqlite3.connect('reseller.db')
+    # Check if database exists
+    db_exists = os.path.exists(db_path)
+    
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     
+    # Check and add missing columns to products table
     if db_exists:
         try:
             c.execute("SELECT price FROM products LIMIT 1")
@@ -34,6 +39,7 @@ def init_db():
             except:
                 pass
     
+    # Check and add missing columns to key_history table
     if db_exists:
         try:
             c.execute("SELECT price FROM key_history LIMIT 1")
@@ -51,6 +57,7 @@ def init_db():
             except:
                 pass
     
+    # Create tables
     c.execute('''CREATE TABLE IF NOT EXISTS admin
                  (id INTEGER PRIMARY KEY, username TEXT, password TEXT)''')
     
@@ -71,6 +78,7 @@ def init_db():
     
     conn.commit()
     
+    # Create admin
     admin = c.execute("SELECT * FROM admin WHERE username='admin'").fetchone()
     if not admin:
         hashed = hashlib.sha256('khanbro786'.encode()).hexdigest()
@@ -82,6 +90,7 @@ def init_db():
         c.execute("UPDATE admin SET password = ? WHERE username = 'admin'", (hashed,))
         conn.commit()
     
+    # Default products with price
     default_products = [
         (124, "DRIPCLIENT FF PC AIMKILL", 44, "7 days", 7.99),
         (49, "BR MOD FF PC VERSION", 49, "7 days", 6.99),
@@ -115,6 +124,7 @@ def init_db():
                 pass
         conn.commit()
     
+    # Add default durations for each product
     for pid, _, _, _, _ in default_products:
         durations = c.execute("SELECT COUNT(*) FROM product_durations WHERE product_id=?", (pid,)).fetchone()[0]
         if durations == 0:
@@ -134,7 +144,11 @@ def init_db():
     
     conn.close()
 
+# Initialize database on startup
 init_db()
+
+def get_db_path():
+    return '/tmp/reseller.db'
 
 def login_required(f):
     @wraps(f)
@@ -155,7 +169,7 @@ def admin_required(f):
     return decorated
 
 def get_balance(reseller_id):
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     c.execute("SELECT balance FROM resellers WHERE id=?", (reseller_id,))
     row = c.fetchone()
@@ -163,7 +177,7 @@ def get_balance(reseller_id):
     return row[0] if row else 0
 
 def get_product_name(product_id):
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     c.execute("SELECT name FROM products WHERE id=?", (product_id,))
     row = c.fetchone()
@@ -171,14 +185,14 @@ def get_product_name(product_id):
     return row[0] if row else f"Product {product_id}"
 
 def get_products():
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     products = c.execute("SELECT id, name, api_id, duration, price FROM products ORDER BY name").fetchall()
     conn.close()
     return products
 
 def get_product_durations(product_id):
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     durations = c.execute("SELECT id, duration, price FROM product_durations WHERE product_id=? ORDER BY id", (product_id,)).fetchall()
     conn.close()
@@ -193,7 +207,7 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        conn = sqlite3.connect('reseller.db')
+        conn = sqlite3.connect('/tmp/reseller.db')
         c = conn.cursor()
         c.execute("SELECT id, username, password, balance FROM resellers WHERE username=?", (username,))
         user = c.fetchone()
@@ -213,7 +227,7 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        conn = sqlite3.connect('reseller.db')
+        conn = sqlite3.connect('/tmp/reseller.db')
         c = conn.cursor()
         c.execute("SELECT id, password FROM admin WHERE username=?", (username,))
         admin = c.fetchone()
@@ -236,7 +250,7 @@ def dashboard():
     reseller_id = session['reseller_id']
     balance = get_balance(reseller_id)
     session['balance'] = balance
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     
     try:
@@ -257,7 +271,7 @@ def get_price():
     product_id = request.form.get('product_id')
     duration = request.form.get('duration')
     
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     
     c.execute("SELECT price FROM product_durations WHERE product_id=? AND duration=?", (product_id, duration))
@@ -284,7 +298,7 @@ def generate_key():
         flash('❌ Product and duration required', 'danger')
         return redirect(url_for('dashboard'))
     
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     
     c.execute("SELECT price FROM product_durations WHERE product_id=? AND duration=?", (product_id, duration))
@@ -341,7 +355,7 @@ def generate_key():
 @app.route('/admin_panel')
 @admin_required
 def admin_panel():
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     resellers = c.execute("SELECT id, username, balance FROM resellers").fetchall()
     products = c.execute("SELECT id, name, api_id, duration, price FROM products ORDER BY id").fetchall()
@@ -366,7 +380,7 @@ def add_reseller():
         flash('❌ Username and password required', 'danger')
         return redirect(url_for('admin_panel'))
     
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     try:
         c.execute("INSERT INTO resellers (username, password, balance) VALUES (?,?,?)",
@@ -385,7 +399,7 @@ def update_balance():
     amount = float(request.form.get('amount', 0))
     action = request.form.get('action')
     
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     if action == 'add':
         c.execute("UPDATE resellers SET balance = balance + ? WHERE id=?", (amount, reseller_id))
@@ -406,7 +420,7 @@ def add_product():
         flash('❌ Product name and API ID required', 'danger')
         return redirect(url_for('admin_panel'))
     
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     try:
         c.execute("INSERT INTO products (name, api_id, duration, price) VALUES (?,?,?,?)", 
@@ -439,7 +453,7 @@ def add_product_duration():
         flash('❌ Product and duration required', 'danger')
         return redirect(url_for('admin_panel'))
     
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     try:
         c.execute("INSERT INTO product_durations (product_id, duration, price) VALUES (?,?,?)", 
@@ -458,7 +472,7 @@ def update_product_duration():
     price = float(request.form.get('price', 0))
     duration = request.form.get('duration')
     
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     try:
         c.execute("UPDATE product_durations SET price=?, duration=? WHERE id=?", 
@@ -473,7 +487,7 @@ def update_product_duration():
 @app.route('/delete_product_duration/<int:duration_id>', methods=['POST'])
 @admin_required
 def delete_product_duration(duration_id):
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     c.execute("DELETE FROM product_durations WHERE id=?", (duration_id,))
     conn.commit()
@@ -484,7 +498,7 @@ def delete_product_duration(duration_id):
 @app.route('/delete_product/<int:product_id>', methods=['POST'])
 @admin_required
 def delete_product(product_id):
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     c.execute("DELETE FROM products WHERE id=?", (product_id,))
     c.execute("DELETE FROM product_durations WHERE product_id=?", (product_id,))
@@ -496,7 +510,7 @@ def delete_product(product_id):
 @app.route('/delete_reseller/<int:reseller_id>', methods=['POST'])
 @admin_required
 def delete_reseller(reseller_id):
-    conn = sqlite3.connect('reseller.db')
+    conn = sqlite3.connect('/tmp/reseller.db')
     c = conn.cursor()
     c.execute("DELETE FROM resellers WHERE id=?", (reseller_id,))
     c.execute("DELETE FROM key_history WHERE reseller_id=?", (reseller_id,))
