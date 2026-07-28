@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body {
+            background: #0a0a12;
+            display: flex;
+            justify-content: center;
+            padding: 16px 12px 40px;
+            min-height: 100vh;
+        }
+        .app {
+            max-width: 480px;
+            width: 100%;
+            background: #111122;
+            border-radius: 24px;
+            padding: 20px 16px 30px;
+            border: 1px solid rgba(150, 80, 255, 0.12);
+            animation: glowPulse 4s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(150, 80, 255, 0.02); }
+            50% { box-shadow: 0 0 60px rgba(150, 80, 255, 0.06); }
+        }
+        h2 {
+            color: #b388ff;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        h2 i { margin-right: 10px; }
+        .card {
+            background: #141428;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #1f1f3a;
+            margin-bottom: 16px;
+            transition: 0.3s;
+        }
+        .card:hover { border-color: #b388ff; box-shadow: 0 0 30px rgba(150, 80, 255, 0.05); }
+        .card h3 {
+            color: #e8e0f0;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        .card h3 i { color: #b388ff; margin-right: 8px; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label {
+            display: block;
+            color: #7a6a9a;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: #0a0a1a;
+            border: 1px solid #1f1f3a;
+            border-radius: 10px;
+            color: #e8e0f0;
+            outline: none;
+            transition: 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #b388ff;
+            box-shadow: 0 0 20px rgba(150, 80, 255, 0.05);
+        }
+        .btn {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 30px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+        .btn:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(124, 58, 237, 0.2); }
+        .btn-danger { background: #ff4757; color: #fff; }
+        .btn-sm { padding: 4px 12px; font-size: 11px; }
+        .btn-success { background: #2ed573; color: #fff; }
+        .reseller-item, .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #1a1a2e;
+            color: #7a6a9a;
+            font-size: 13px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .reseller-item:last-child, .product-item:last-child { border-bottom: none; }
+        .reseller-item .uname, .product-item .pname {
+            color: #e8e0f0;
+            font-weight: 500;
+        }
+        .reseller-item .bal { color: #2ed573; }
+        .inline-form {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .inline-form input {
+            flex: 1;
+            min-width: 50px;
+            padding: 4px 8px;
+            background: #0a0a1a;
+            border: 1px solid #1f1f3a;
+            border-radius: 8px;
+            color: #e8e0f0;
+            font-size: 12px;
+        }
+        .flash {
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            background: #141428;
+            border-left: 3px solid #b388ff;
+            color: #e8e0f0;
+            animation: flashSlide 0.5s ease-in-out;
+        }
+        @keyframes flashSlide {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .flash.danger { border-left-color: #ff4757; background: #1f1418; }
+        .flash.success { border-left-color: #2ed573; background: #141f18; }
+        .back-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #b388ff;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .back-link:hover { text-decoration: underline; color: #a07cff; }
+        .footer-copy { text-align: center; margin-top: 16px; color: #2a2a4a; font-size: 11px; }
+        .delete-form { display: inline; }
+        .duration-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 8px;
+            margin: 4px 0;
+            background: #0a0a1a;
+            border-radius: 8px;
+            border: 1px solid #1a1a2e;
+            color: #7a6a9a;
+            font-size: 12px;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .duration-item:hover { border-color: #b388ff; }
+        .duration-item .dur { color: #e8e0f0; font-weight: 500; }
+        .duration-item .dur-price { color: #2ed573; font-weight: 600; }
+        .product-sub {
+            padding-left: 16px;
+            margin: 8px 0 12px 0;
+            border-left: 2px solid #1f1f3a;
+        }
+        .product-sub .dur-form {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .product-sub .dur-form select {
+            flex: 1;
+            min-width: 80px;
+            padding: 4px 8px;
+            background: #0a0a1a;
+            border: 1px solid #1f1f3a;
+            border-radius: 8px;
+            color: #e8e0f0;
+            font-size: 11px;
+            outline: none;
+        }
+        .product-sub .dur-form input {
+            width: 60px;
+            padding: 4px 8px;
+            background: #0a0a1a;
+            border: 1px solid #1f1f3a;
+            border-radius: 8px;
+            color: #e8e0f0;
+            font-size: 11px;
+            outline: none;
+        }
+        .duration-actions {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .duration-actions form { display: inline; }
+        .btn-xs { padding: 2px 8px; font-size: 9px; border-radius: 12px; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <h2><i class="fas fa-crown"></i> Admin Panel</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}"><i class="fas fa-info-circle"></i> {{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <h3><i class="fas fa-user-plus"></i> Add Reseller</h3>
+        <form method="POST" action="{{ url_for('add_reseller') }}">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Enter username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="text" name="password" placeholder="Enter password" required>
+            </div>
+            <div class="form-group">
+                <label>Initial Balance ($)</label>
+                <input type="number" name="balance" step="0.01" value="0">
+            </div>
+            <button type="submit" class="btn"><i class="fas fa-plus"></i> Add Reseller</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3><i class="fas fa-users"></i> Resellers</h3>
+        {% if resellers %}
+            {% for r in resellers %}
+            <div class="reseller-item">
+                <div>
+                    <span class="uname"><i class="fas fa-user"></i> {{ r[1] }}</span>
+                    <span class="bal"> ${{ "%.2f"|format(r[2]) }}</span>
+                </div>
+                <div class="inline-form">
+                    <form method="POST" action="{{ url_for('update_balance') }}" style="display:inline-flex; gap:4px; align-items:center;">
+                        <input type="hidden" name="reseller_id" value="{{ r[0] }}">
+                        <input type="number" name="amount" step="0.01" placeholder="Amt" style="width:55px;">
+                        <button type="submit" name="action" value="add" class="btn btn-sm">+</button>
+                        <button type="submit" name="action" value="set" class="btn btn-sm btn-danger">=</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('delete_reseller', reseller_id=r[0]) }}" class="delete-form">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this reseller?')"><i class="fas fa-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color:#4a4a6a;">No resellers yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3><i class="fas fa-cube"></i> Manage Products</h3>
+        <form method="POST" action="{{ url_for('add_product') }}" style="margin-bottom:14px;">
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <input type="text" name="name" placeholder="Product Name" style="flex:2; padding:8px 12px; background:#0a0a1a; border:1px solid #1f1f3a; border-radius:10px; color:#e8e0f0; outline:none;">
+                <input type="number" name="api_id" placeholder="API ID" style="flex:1; padding:8px 12px; background:#0a0a1a; border:1px solid #1f1f3a; border-radius:10px; color:#e8e0f0; outline:none;">
+                <button type="submit" class="btn"><i class="fas fa-plus"></i> Add</button>
+            </div>
+        </form>
+        {% if products %}
+            {% for p in products %}
+            <div class="product-item">
+                <div>
+                    <span class="pname">{{ p[1] }}</span>
+                    <span style="color:#4a4a6a; font-size:11px; margin-left:6px;">ID: {{ p[2] }}</span>
+                </div>
+                <form method="POST" action="{{ url_for('delete_product', product_id=p[0]) }}" class="delete-form">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this product?')"><i class="fas fa-trash"></i></button>
+                </form>
+            </div>
+            <div class="product-sub">
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+                    <span style="color:#7a6a9a; font-size:11px;">Durations & Prices:</span>
+                </div>
+                <form method="POST" action="{{ url_for('add_product_duration') }}" class="dur-form" style="margin-bottom:8px;">
+                    <input type="hidden" name="product_id" value="{{ p[0] }}">
+                    <select name="duration">
+                        <option value="1 day">1 Day</option>
+                        <option value="7 days">7 Days</option>
+                        <option value="15 days">15 Days</option>
+                        <option value="30 days">30 Days</option>
+                    </select>
+                    <input type="number" name="price" placeholder="$ Price" step="0.01">
+                    <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-plus"></i> Add</button>
+                </form>
+                {% if product_durations[p[0]] %}
+                    {% for d in product_durations[p[0]] %}
+                    <div class="duration-item">
+                        <span class="dur">{{ d[1] }}</span>
+                        <span class="dur-price">${{ "%.2f"|format(d[2]) }}</span>
+                        <div class="duration-actions">
+                            <form method="POST" action="{{ url_for('update_product_duration') }}" style="display:inline-flex; gap:2px; align-items:center;">
+                                <input type="hidden" name="duration_id" value="{{ d[0] }}">
+                                <input type="number" name="price" step="0.01" value="{{ d[2] }}" style="width:50px; padding:2px 4px; background:#0a0a1a; border:1px solid #1f1f3a; border-radius:6px; color:#e8e0f0; font-size:10px;">
+                                <button type="submit" class="btn btn-xs btn-success">Update</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('delete_product_duration', duration_id=d[0]) }}" class="delete-form">
+                                <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Delete this duration?')"><i class="fas fa-times"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color:#4a4a6a;">No products added.</p>
+        {% endif %}
+    </div>
+
+    <a href="{{ url_for('dashboard') }}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    <div class="footer-copy">© 2026 AimbotFX Admin Panel</div>
+</div>
+</body>
+</html>

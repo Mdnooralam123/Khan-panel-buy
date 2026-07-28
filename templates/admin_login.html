@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reseller Panel</title>
+    <title>Admin Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -14,8 +14,6 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            overflow: hidden;
-            position: relative;
         }
         .bg-glow {
             position: fixed;
@@ -28,24 +26,6 @@
         @keyframes bgPulse {
             0%, 100% { opacity: 0.5; }
             50% { opacity: 1; }
-        }
-        .particles {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: rgba(124, 58, 237, 0.3);
-            border-radius: 50%;
-            animation: float 8s infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
-            50% { transform: translateY(-100px) translateX(50px); opacity: 0.8; }
         }
         .login-card {
             position: relative;
@@ -60,24 +40,13 @@
         }
         @keyframes glowPulse {
             0%, 100% { box-shadow: 0 0 30px rgba(150, 80, 255, 0.05); }
-            50% { box-shadow: 0 0 60px rgba(150, 80, 255, 0.15); }
-        }
-        @keyframes glowBorder {
-            0%, 100% { border-color: rgba(150, 80, 255, 0.15); }
-            50% { border-color: rgba(150, 80, 255, 0.4); }
-        }
-        .login-card {
-            animation: glowPulse 3s ease-in-out infinite, glowBorder 3s ease-in-out infinite;
+            50% { box-shadow: 0 0 60px rgba(150, 80, 255, 0.12); }
         }
         .login-card .telegram {
             text-align: center;
             color: #a07cff;
             font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px;
         }
-        .login-card .telegram i { margin-right: 6px; }
         .login-card .master {
             text-align: center;
             color: #b388ff;
@@ -89,34 +58,28 @@
             text-align: center;
             color: #7a6a9a;
             font-size: 12px;
-            letter-spacing: 2px;
             margin-bottom: 22px;
             border-bottom: 1px solid #1a1a2e;
             padding-bottom: 18px;
         }
         .login-card h2 {
             text-align: center;
-            color: #e8e0f0;
+            color: #b388ff;
             font-weight: 600;
             font-size: 22px;
-            margin-bottom: 4px;
         }
         .login-card .sub {
             text-align: center;
             color: #7a6a9a;
             font-size: 12px;
             margin-bottom: 24px;
-            letter-spacing: 0.5px;
         }
-        .login-card .sub i { color: #b388ff; margin-right: 4px; }
         .input-group { margin-bottom: 16px; }
         .input-group label {
             display: block;
             color: #7a6a9a;
             font-size: 12px;
             margin-bottom: 5px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
         }
         .input-group input {
             width: 100%;
@@ -126,14 +89,13 @@
             border-radius: 12px;
             color: #e8e0f0;
             font-size: 14px;
-            transition: 0.3s;
             outline: none;
+            transition: 0.3s;
         }
         .input-group input:focus {
             border-color: #b388ff;
             box-shadow: 0 0 30px rgba(150, 80, 255, 0.08);
         }
-        .input-group input::placeholder { color: #3a3a5a; }
         .btn-login {
             width: 100%;
             padding: 15px;
@@ -143,7 +105,6 @@
             color: #fff;
             font-weight: 700;
             font-size: 15px;
-            letter-spacing: 0.5px;
             cursor: pointer;
             transition: 0.3s;
             margin-top: 6px;
@@ -152,38 +113,22 @@
             transform: scale(1.02);
             box-shadow: 0 0 40px rgba(124, 58, 237, 0.3);
         }
-        .btn-login i { margin-right: 8px; }
         .footer-links {
             text-align: center;
             margin-top: 18px;
             font-size: 13px;
-            color: #5a4a7a;
         }
         .footer-links a {
             color: #b388ff;
             text-decoration: none;
-            font-weight: 500;
         }
-        .footer-links a:hover { text-decoration: underline; }
-        .whatsapp {
-            margin-top: 18px;
-            padding: 12px;
-            background: #141428;
-            border-radius: 14px;
-            text-align: center;
-            color: #7a6a9a;
-            font-size: 13px;
-            border: 1px solid #1f1f3a;
-        }
-        .whatsapp i { color: #25d366; margin-right: 10px; font-size: 16px; }
-        .whatsapp span { color: #e8e0f0; font-weight: 500; }
         .flash {
             padding: 12px 16px;
             border-radius: 12px;
             margin-bottom: 16px;
             font-size: 13px;
             background: #141428;
-            border-left: 3px solid #b388ff;
+            border-left: 3px solid #ff4757;
             color: #e8e0f0;
             animation: flashSlide 0.5s ease-in-out;
         }
@@ -192,9 +137,7 @@
             100% { opacity: 1; transform: translateX(0); }
         }
         .flash.danger { border-left-color: #ff4757; background: #1f1418; }
-        .flash.success { border-left-color: #2ed573; background: #141f18; }
         .footer-copy { text-align: center; margin-top: 16px; color: #2a2a4a; font-size: 11px; }
-        .arrow { color: #b388ff; }
         .security-check {
             display: none;
             text-align: center;
@@ -230,13 +173,12 @@
 </head>
 <body>
     <div class="bg-glow"></div>
-    <div class="particles" id="particles"></div>
     <div class="login-card">
         <div class="telegram"><i class="fab fa-telegram-plane"></i> Telegram-ayushopyt</div>
         <div class="master">MASTERMANEL</div>
         <div class="premium">Premium Access</div>
 
-        <h2>Reseller Panel</h2>
+        <h2>Admin Panel</h2>
         <p class="sub"><i class="fas fa-shield-alt"></i> Ultra Secure Portal</p>
 
         <div class="security-check" id="securityCheck">
@@ -249,7 +191,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
-              <div class="flash {{ category }}"><i class="fas fa-info-circle"></i> {{ message }}</div>
+              <div class="flash {{ category }}"><i class="fas fa-exclamation-circle"></i> {{ message }}</div>
             {% endfor %}
           {% endif %}
         {% endwith %}
@@ -263,32 +205,18 @@
                 <label><i class="fas fa-lock"></i> Password</label>
                 <input type="password" name="password" placeholder="Enter password" required>
             </div>
-            <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> LOGIN SECURELY <span class="arrow">→</span></button>
+            <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> LOGIN SECURELY →</button>
         </form>
 
         <div class="footer-links">
-            <a href="{{ url_for('admin_login') }}"><i class="fas fa-user-shield"></i> Admin Login</a> · 
+            <a href="{{ url_for('login') }}"><i class="fas fa-arrow-left"></i> Reseller Login</a> · 
             <a href="#">Contact Register</a>
         </div>
 
-        <div class="whatsapp">
-            <i class="fab fa-whatsapp"></i> Support: <span>9304619487</span>
-        </div>
-
-        <div class="footer-copy">© 2026 LICENCE Premium V2.0</div>
+        <div class="footer-copy">© 2025 LICENCE Premium V2.0</div>
     </div>
 
     <script>
-        for(let i=0; i<30; i++) {
-            let p = document.createElement('div');
-            p.className = 'particle';
-            p.style.left = Math.random() * 100 + '%';
-            p.style.top = Math.random() * 100 + '%';
-            p.style.animationDelay = Math.random() * 8 + 's';
-            p.style.animationDuration = (6 + Math.random() * 6) + 's';
-            document.getElementById('particles').appendChild(p);
-        }
-
         function showSecurity() {
             document.getElementById('securityCheck').classList.add('active');
             setTimeout(() => {

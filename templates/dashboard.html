@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shorts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body {
+            background: #0a0a12;
+            display: flex;
+            justify-content: center;
+            padding: 12px 10px 20px;
+            min-height: 100vh;
+        }
+        .app {
+            max-width: 480px;
+            width: 100%;
+            background: #111122;
+            border-radius: 24px;
+            padding: 16px 14px 20px;
+            border: 1px solid rgba(150, 80, 255, 0.12);
+            box-shadow: 0 0 40px rgba(150, 80, 255, 0.03);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(150, 80, 255, 0.03); }
+            50% { box-shadow: 0 0 60px rgba(150, 80, 255, 0.08); }
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .top-bar .title {
+            color: #e8e0f0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .top-bar .title i { color: #b388ff; margin-right: 6px; }
+        .top-bar .subscribe {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: #fff;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            animation: subGlow 2s ease-in-out infinite;
+        }
+        @keyframes subGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(124, 58, 237, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(124, 58, 237, 0.4); }
+        }
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #141428;
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 1px solid #1f1f3a;
+            margin-bottom: 16px;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+        @keyframes borderGlow {
+            0%, 100% { border-color: #1f1f3a; }
+            50% { border-color: rgba(150, 80, 255, 0.3); }
+        }
+        .balance-row .label { color: #7a6a9a; font-size: 13px; }
+        .balance-row .label i { margin-right: 6px; color: #b388ff; }
+        .balance-row .amount {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2ed573;
+            animation: amountGlow 2s ease-in-out infinite;
+        }
+        @keyframes amountGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(46, 213, 115, 0.1); }
+            50% { text-shadow: 0 0 25px rgba(46, 213, 115, 0.2); }
+        }
+        .balance-row .amount i { font-size: 16px; margin-right: 4px; }
+        .balance-row .telegram {
+            color: #a07cff;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #e8e0f0;
+            margin: 18px 0 12px;
+        }
+        .section-title i { color: #b388ff; margin-right: 8px; }
+        .key-gen {
+            background: #141428;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #1f1f3a;
+            transition: 0.3s;
+        }
+        .key-gen:hover { border-color: #b388ff; box-shadow: 0 0 30px rgba(150, 80, 255, 0.05); }
+        .key-gen .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .key-gen .row .field { flex: 1; min-width: 100px; }
+        .key-gen label {
+            display: block;
+            font-size: 11px;
+            color: #7a6a9a;
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+        }
+        .key-gen select, .key-gen input {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0a0a1a;
+            border: 1px solid #1f1f3a;
+            border-radius: 10px;
+            color: #e8e0f0;
+            font-size: 13px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .key-gen select:focus, .key-gen input:focus {
+            border-color: #b388ff;
+            box-shadow: 0 0 20px rgba(150, 80, 255, 0.05);
+        }
+        .key-gen .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #1f1f3a;
+        }
+        .btn-generate {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            animation: btnGlow 2s ease-in-out infinite;
+        }
+        @keyframes btnGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(124, 58, 237, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(124, 58, 237, 0.4); }
+        }
+        .btn-generate:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(124, 58, 237, 0.3);
+        }
+        .history-box {
+            background: #141428;
+            border-radius: 16px;
+            padding: 12px;
+            margin-top: 14px;
+            border: 1px solid #1f1f3a;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 4px;
+            border-bottom: 1px solid #1a1a2e;
+            font-size: 12px;
+            color: #7a6a9a;
+            transition: 0.3s;
+        }
+        .history-item:hover { background: #1a1a2e; border-radius: 8px; padding: 8px 10px; }
+        .history-item:last-child { border-bottom: none; }
+        .history-item .key {
+            color: #2ed573;
+            font-weight: 500;
+            font-size: 11px;
+        }
+        .history-item .date { color: #4a4a6a; font-size: 10px; }
+        .flash {
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            background: #141428;
+            border-left: 3px solid #b388ff;
+            color: #e8e0f0;
+            animation: flashSlide 0.5s ease-in-out;
+        }
+        @keyframes flashSlide {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .flash.danger { border-left-color: #ff4757; background: #1f1418; }
+        .flash.success { border-left-color: #2ed573; background: #141f18; }
+        .copy-btn {
+            background: #1a1a2e;
+            border: none;
+            color: #b388ff;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .copy-btn:hover { background: #22223e; transform: scale(1.05); }
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 0;
+            border-top: 1px solid #1a1a2e;
+            margin-top: 18px;
+        }
+        .bottom-nav a {
+            color: #4a4a6a;
+            text-decoration: none;
+            font-size: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            transition: 0.3s;
+        }
+        .bottom-nav a i { font-size: 18px; }
+        .bottom-nav a:hover { color: #b388ff; transform: translateY(-2px); }
+        .bottom-nav a.active { color: #b388ff; }
+        .footer-copy { text-align: center; margin-top: 14px; color: #2a2a4a; font-size: 10px; }
+        .whatsapp-footer {
+            margin-top: 16px;
+            padding: 10px;
+            background: #141428;
+            border-radius: 12px;
+            text-align: center;
+            color: #7a6a9a;
+            font-size: 12px;
+            border: 1px solid #1f1f3a;
+        }
+        .whatsapp-footer i { color: #25d366; margin-right: 8px; }
+        .whatsapp-footer span { color: #e8e0f0; font-weight: 500; }
+        .mid-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding: 8px 0;
+            border-top: 1px solid #1a1a2e;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        .mid-bar .b-logo { color: #b388ff; font-size: 18px; font-weight: 700; }
+        .mid-bar .key-link { color: #7a6a9a; font-size: 12px; }
+        .mid-bar .telegram-tag { color: #a07cff; font-size: 11px; font-weight: 500; }
+        .qty-btn {
+            background: #1a1a2e;
+            border: 1px solid #1f1f3a;
+            color: #e8e0f0;
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .qty-btn:hover {
+            background: #2a2a4e;
+            border-color: #b388ff;
+            box-shadow: 0 0 20px rgba(150, 80, 255, 0.1);
+        }
+        .qty-input {
+            text-align: center;
+            width: 50px;
+            padding: 8px;
+            background: #0a0a1a;
+            border: 1px solid #1f1f3a;
+            border-radius: 8px;
+            color: #e8e0f0;
+        }
+        .credit-display {
+            font-size: 14px;
+            color: #2ed573;
+            font-weight: 600;
+            text-align: right;
+            padding: 4px 8px;
+            background: #0a0a1a;
+            border-radius: 8px;
+            border: 1px solid #1f1f3a;
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="top-bar">
+        <span class="title"><i class="fas fa-crown"></i> Shorts</span>
+        <span class="subscribe">SUBSCRIBE</span>
+    </div>
+
+    <div class="balance-row">
+        <span class="label"><i class="fas fa-wallet"></i> Balance:</span>
+        <span class="amount"><i class="fas fa-dollar-sign"></i> {{ "%.0f"|format(balance) }} Dollar</span>
+        <span class="telegram"><i class="fab fa-telegram-plane"></i> {{ username }}</span>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}"><i class="fas fa-info-circle"></i> {{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="section-title"><i class="fas fa-key"></i> Key Generator</div>
+    <div class="key-gen">
+        <form method="POST" action="{{ url_for('generate_key') }}" id="keyForm">
+            <div class="row">
+                <div class="field">
+                    <label><i class="fas fa-cube"></i> Product:</label>
+                    <select name="product_id" required id="productSelect" onchange="updatePrice()">
+                        <option value="">Select product</option>
+                        {% for p in products %}
+                        <option value="{{ p[0] }}">{{ p[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label><i class="far fa-calendar-alt"></i> Validity:</label>
+                    <select name="duration" required id="durationSelect" onchange="updatePrice()">
+                        <option value="">Select</option>
+                        <option value="1 day">1 Day</option>
+                        <option value="7 days">7 Days</option>
+                        <option value="15 days">15 Days</option>
+                        <option value="30 days">30 Days</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label><i class="fas fa-sort-numeric-up"></i> Quantity:</label>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <button type="button" class="qty-btn" onclick="qtyDown()">−</button>
+                        <input type="number" name="quantity" id="qty" value="1" min="1" max="10" class="qty-input" onchange="updatePrice()">
+                        <button type="button" class="qty-btn" onclick="qtyUp()">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="price-row">
+                <span style="color:#7a6a9a; font-size:12px;"><i class="fas fa-info-circle"></i> Total Credits: <span id="creditDisplay" class="credit-display" style="display:inline-block; padding:2px 12px;">1</span></span>
+                <button type="submit" class="btn-generate"><i class="fas fa-bolt"></i> GENERATE KEYS</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="section-title"><i class="fas fa-history"></i> Key History</div>
+    <div class="history-box">
+        {% if history %}
+            {% for item in history %}
+            <div class="history-item">
+                <div>
+                    <strong style="color:#e8e0f0;">{{ item[0] }}</strong>
+                    <span style="color:#4a4a6a; font-size:10px; margin-left:6px;">{{ item[1] }}</span>
+                    <div class="key"><i class="fas fa-key"></i> {{ item[2] }}</div>
+                </div>
+                <div style="text-align:right;">
+                    <span class="date">{{ item[3][:10] }}</span>
+                    <button class="copy-btn" onclick="navigator.clipboard.writeText('{{ item[2] }}')"><i class="far fa-copy"></i></button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div style="color:#4a4a6a; padding:14px 4px; text-align:center; font-size:13px;">
+                <i class="fas fa-inbox" style="display:block; font-size:24px; margin-bottom:8px;"></i>
+                You have not purchased any keys yet.
+            </div>
+        {% endif %}
+    </div>
+
+    <div style="text-align:right; margin-top:6px;">
+        <span style="color:#7a6a9a; font-size:11px; cursor:pointer;" 
+              onmouseover="this.style.color='#b388ff'" onmouseout="this.style.color='#7a6a9a'">Download CSV</span>
+    </div>
+
+    <div class="mid-bar">
+        <span class="b-logo">B</span>
+        <span class="key-link">Key page website</span>
+        <span class="telegram-tag"><i class="fab fa-telegram-plane"></i> @whitexmodsofficial</span>
+        <span class="subscribe" style="background:linear-gradient(135deg, #7c3aed, #6d28d9); color:#fff; padding:2px 14px; border-radius:16px; font-size:10px; font-weight:700;">Subscribe</span>
+    </div>
+
+    <div class="whatsapp-footer">
+        <i class="fab fa-whatsapp"></i> Support: <span>9304619487</span>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="#" class="active"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="#"><i class="fas fa-film"></i><span>Shorts</span></a>
+        <a href="#"><i class="fas fa-plus-circle"></i><span>+</span></a>
+        <a href="#"><i class="fas fa-bell"></i><span>Subscriptions</span></a>
+        <a href="#"><i class="fas fa-user"></i><span>You</span></a>
+    </div>
+
+    <div class="footer-copy">DRIP CLIENT, HG CHEAT, BR MOD KEY GENERAOR ...</div>
+</div>
+
+<script>
+    function qtyUp() {
+        let q = document.getElementById('qty');
+        q.value = parseInt(q.value) + 1;
+        if (q.value > 10) q.value = 10;
+        updatePrice();
+    }
+    function qtyDown() {
+        let q = document.getElementById('qty');
+        q.value = parseInt(q.value) - 1;
+        if (q.value < 1) q.value = 1;
+        updatePrice();
+    }
+    
+    function updatePrice() {
+        let productId = document.getElementById('productSelect').value;
+        let duration = document.getElementById('durationSelect').value;
+        let quantity = parseInt(document.getElementById('qty').value) || 1;
+        
+        if (productId && duration) {
+            fetch('/get_price', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'product_id=' + productId + '&duration=' + encodeURIComponent(duration)
+            })
+            .then(response => response.json())
+            .then(data => {
+                let total = data.price * quantity;
+                document.getElementById('creditDisplay').textContent = total.toFixed(2);
+            })
+            .catch(() => {
+                document.getElementById('creditDisplay').textContent = quantity;
+            });
+        } else {
+            document.getElementById('creditDisplay').textContent = quantity;
+        }
+    }
+</script>
+</body>
+</html>
